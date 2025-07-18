@@ -5,7 +5,7 @@
 
 [x] Comando de DM para membros e cargos
 
-[_] Comando de verificação (igual nosso autoresponder?)
+[x] Comando de verificação (igual nosso autoresponder?)
 
 [_] Kick
 
