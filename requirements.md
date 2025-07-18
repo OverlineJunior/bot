@@ -3,7 +3,7 @@
 	- Se um usuário perguntar "qual o comando para ticket?", o bot responde "Use /ticket para abrir um novo ticket."
 	- Mensagens contendo "ajuda" recebem uma resposta automática com um link para o FAQ do servidor.
 
-[_] Enviar DM para membros
+[x] Comando de DM para membros e cargos
 
 [_] Comando de verificação (igual nosso autoresponder?)
 

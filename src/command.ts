@@ -1,14 +1,20 @@
-import { Client, Message } from "discord.js"
+import { Client, Message, User } from "discord.js"
 
-type Parser = (arg: string) => any
+type Parser = (client: Client, arg: string) => any
 
 type Parsers = [Parser, ...Parser[]]
 
 const PREFIX = '?'
 
 export const parse = {
-	string: (arg: string): string => arg,
-	number: (arg: string): number => Number(arg),
+	string: (_: Client, arg?: string): string | undefined => arg,
+	number: (_: Client, arg?: string): number | undefined => arg ? Number(arg) : undefined,
+	user: (client: Client, arg?: string): User | undefined => {
+		const userId = arg?.replace(/[<@!>]/g, '')
+		if (!userId) return undefined
+
+		return client.users.cache.get(userId) || undefined
+	},
 }
 
 export function command(
@@ -40,7 +46,7 @@ export function command(
 		if (args[0] !== `${PREFIX}${cmdName}`) return
 
 		const parsedArgs = parsers
-			? parsers.map((parse, i) => parse(args[i + 1]))
+			? parsers.map((parse, i) => parse(client, args[i + 1]))
 			: args.slice(1)
 
 		handler(msg, ...parsedArgs)
