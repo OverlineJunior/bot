@@ -1,6 +1,5 @@
 import { Client } from "discord.js"
 import { command, parse } from "../command"
-import { NO_GUILD_REPLY, NOT_MEMBER_REPLY } from "../shared"
 
 const SUCCESS_REPLY = (user: string, reason: string) => `Banned ${user} for: ${reason}`
 const FAILURE_REPLY = "Failed to ban user"

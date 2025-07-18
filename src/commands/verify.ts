@@ -1,6 +1,5 @@
 import { Client } from 'discord.js'
 import { command, parse } from '../command'
-import { NO_GUILD_REPLY, NOT_MEMBER_REPLY } from '../shared'
 
 const VERIFIED_ROLE_NAME = 'Verificado'
 const SUCCESS_REPLY = 'User has been verified successfully!'
