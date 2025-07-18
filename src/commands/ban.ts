@@ -15,7 +15,10 @@ export const banCmd = command(
 		member
 			.ban({ reason })
 			.then(() => {
-				member.send(DM(cmd.guild!.name, reason))
+				member
+					.send(DM(cmd.guild!.name, reason))
+					.catch(() => console.log(`Failed to send ban DM to ${member.user.tag}`))
+				
 				cmd.reply(SUCCESS_REPLY(member.user.tag, reason))
 			})
 			.catch(err => {

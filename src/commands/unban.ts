@@ -22,7 +22,10 @@ export const unbanCmd = command(
 		cmd.guild.members
 			.unban(userId, reason)
 			.then(user => {
-				user?.send(DM(cmd.guild!.name, reason))
+				user
+					?.send(DM(cmd.guild!.name, reason))
+					.catch(() => console.log(`Failed to send unban DM to user of ID ${userId}`))
+
 				cmd.reply(SUCCESS_REPLY(reason))
 			})
 			.catch(err => {
