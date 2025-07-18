@@ -1,13 +1,12 @@
 import { Client } from 'discord.js'
 import { command, parse } from '../command'
+import { NO_GUILD_REPLY, NOT_MEMBER_REPLY } from '../shared'
 
 const VERIFIED_ROLE_NAME = 'Verificado'
 const SUCCESS_REPLY = 'User has been verified successfully!'
 const FAILURE_REPLY = 'Failed to verify user.'
 const NO_MENTION_REPLY = 'Please mention a user to verify.'
-const NO_SERVER_REPLY = 'This command can only be used in a server.'
 const ROLE_NOT_FOUND_REPLY = (role: string) => `Role ´${role}´ not found. This is likely a bug.`
-const NOT_MEMBER_REPLY = 'User is not a member of this server.'
 const DM = (guild: string) => `You have been verified in ${guild}. You can now access the verified channels.`
 
 export default function startVerifyCmd(client: Client) {
@@ -18,7 +17,7 @@ export default function startVerifyCmd(client: Client) {
 		}
 
 		if (!cmd.guild) {
-			cmd.reply(NO_SERVER_REPLY)
+			cmd.reply(NO_GUILD_REPLY)
 			return
 		}
 
