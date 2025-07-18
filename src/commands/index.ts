@@ -5,6 +5,7 @@ import startKickCmd from "./kick"
 import startSayCmd from "./say"
 import startBanCmd from "./ban"
 import startUnbanCmd from "./unban"
+import startHelpCmd from "./help"
 
 export default function startCommands(client: Client) {
 	startDmCmd(client)
@@ -13,4 +14,5 @@ export default function startCommands(client: Client) {
 	startSayCmd(client)
 	startBanCmd(client)
 	startUnbanCmd(client)
+	startHelpCmd(client)
 }
