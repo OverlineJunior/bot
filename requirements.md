@@ -9,7 +9,7 @@
 
 [x] Kick
 
-[_] Ban
+[x] Ban
 
 [_] Warn (incremental e persistente)
 
