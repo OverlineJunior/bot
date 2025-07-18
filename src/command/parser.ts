@@ -1,4 +1,4 @@
-import { Client, Message, Role, User } from "discord.js"
+import { Client, GuildMember, Message, Role, User } from "discord.js"
 import { isNumeric, isRoleMention, isUserMention, NO_GUILD_REPLY } from "../shared"
 
 export interface ParserContext {
@@ -18,12 +18,21 @@ export interface Argument {
 	parser?: Parser
 }
 
+const EXPECTED_REPLY = (arg: string, expected: string) =>
+	`Argument '${arg}' expected ${expected}.`
+
+const EXPECTED_GOT_REPLY = (arg: string, expected: string, got: string) =>
+	`Argument '${arg}' expected ${expected}, but got '${got}'.`
+
+const ID_NOT_FOUND_REPLY = (subject: string, id: string) =>
+	`${subject} with ID '${id}' not found.`
+
 export const parse = {
 	string: ({ token }: ParserContext): string => token,
 
 	number: ({ cmd, token, arg }: ParserContext): number | undefined => {
 		if (!isNumeric(token)) {
-			cmd.reply(`Argument '${arg.name}' expected a number, but got '${token}'.`)
+			cmd.reply(EXPECTED_GOT_REPLY(arg.name, 'a number', token))
 			return undefined
 		}
 
@@ -32,7 +41,7 @@ export const parse = {
 
 	user: ({ client, cmd, token, arg }: ParserContext): User | undefined => {
 		if (!isUserMention(token)) {
-			cmd.reply(`Argument '${arg.name}' expected an user mention.`)
+			cmd.reply(EXPECTED_REPLY(arg.name, 'a user mention'))
 			return undefined
 		}
 
@@ -40,7 +49,7 @@ export const parse = {
 
 		const user = client.users.cache.get(userId)
 		if (!user) {
-			cmd.reply(`User with ID '${userId}' not found.`)
+			cmd.reply(ID_NOT_FOUND_REPLY('User', userId))
 			return undefined
 		}
 
@@ -49,7 +58,7 @@ export const parse = {
 
 	role: ({ cmd, token, arg }: ParserContext): Role | undefined => {
 		if (!isRoleMention(token)) {
-			cmd.reply(`Argument '${arg.name}' expected a role mention.`)
+			cmd.reply(EXPECTED_REPLY(arg.name, 'a role mention'))
 			return undefined
 		}
 
@@ -62,7 +71,7 @@ export const parse = {
 		const role = cmd.guild.roles.cache.get(roleId)
 
 		if (!role) {
-			cmd.reply(`Role with ID '${roleId}' not found.`)
+			cmd.reply(ID_NOT_FOUND_REPLY('Role', roleId))
 			return undefined
 		}
 
@@ -75,8 +84,30 @@ export const parse = {
 		} else if (isRoleMention(ctx.token)) {
 			return parse.role(ctx)
 		} else {
-			ctx.cmd.reply(`Argument '${ctx.arg.name}' expected a user or role mention.`)
+			ctx.cmd.reply(EXPECTED_REPLY(ctx.arg.name, 'a user or role mention'))
 			return undefined
 		}
 	},
+
+	member: ({ cmd, token, arg }: ParserContext): GuildMember | undefined => {
+		if (!isUserMention(token)) {
+			cmd.reply(EXPECTED_REPLY(arg.name, 'a user mention'))
+			return undefined
+		}
+
+		if (!cmd.guild) {
+			cmd.reply(NO_GUILD_REPLY)
+			return undefined
+		}
+
+		const userId = token.replace(/[<@!>]/g, '')
+		const member = cmd.guild.members.cache.get(userId)
+
+		if (!member) {
+			cmd.reply(ID_NOT_FOUND_REPLY('Member', userId))
+			return undefined
+		}
+
+		return member
+	}
 }

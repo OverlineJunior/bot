@@ -11,26 +11,15 @@ export default function startBanCmd(client: Client) {
 		'ban',
 		'Ban a user from the server',
 		[
-			{ name: 'user', description: 'User to ban', parser: parse.user },
+			{ name: 'member', description: 'Member to ban', parser: parse.member },
 			{ name: 'reason', description: 'Reason for ban', parser: parse.string }
 		],
-		(cmd, user, reason) => {
-			if (!cmd.guild) {
-				cmd.reply(NO_GUILD_REPLY)
-				return
-			}
-
-			const member = cmd.guild.members.cache.get(user.id)
-			if (!member) {
-				cmd.reply(NOT_MEMBER_REPLY)
-				return
-			}
-
+		(cmd, member, reason) => {
 			member
 				.ban({ reason })
-				.then(() => cmd.reply(SUCCESS_REPLY(user.tag, reason)))
+				.then(() => cmd.reply(SUCCESS_REPLY(member.user.tag, reason)))
 				.catch(err => {
-					console.error(`Failed to ban user ´${user.tag}´: ${err}`)
+					console.error(`Failed to ban user ´${member.user.tag}´: ${err}`)
 					cmd.reply(FAILURE_REPLY)
 				})
 		}

@@ -11,26 +11,15 @@ export default function startKickCmd(client: Client) {
 		'kick',
 		'Kick a user from the server',
 		[
-			{ name: 'user', description: 'User to kick', parser: parse.user },
+			{ name: 'member', description: 'Member to kick', parser: parse.member },
 			{ name: 'reason', description: 'Reason for kick', parser: parse.string }
 		],
-		(cmd, user, reason) => {
-			if (!cmd.guild) {
-				cmd.reply(NO_GUILD_REPLY)
-				return
-			}
-
-			const member = cmd.guild.members.cache.get(user.id)
-			if (!member) {
-				cmd.reply(NOT_MEMBER_REPLY)
-				return
-			}
-
+		(cmd, member, reason) => {
 			member
 				.kick(reason)
-				.then(() => cmd.reply(SUCCESS_REPLY(user.tag, reason)))
+				.then(() => cmd.reply(SUCCESS_REPLY(member.user.tag, reason)))
 				.catch(err => {
-					console.error(`Failed to kick user ´${user.tag}´: ${err}`)
+					console.error(`Failed to kick user ´${member.user.tag}´: ${err}`)
 					cmd.reply(FAILURE_REPLY)
 				})
 		},

@@ -14,23 +14,12 @@ export default function startVerifyCmd(client: Client) {
 		'verify',
 		'Verify a user and give them the verified role',
 		[
-			{ name: 'user', description: 'User to verify', parser: parse.user }
+			{ name: 'member', description: 'Member to verify', parser: parse.member }
 		],
-		(cmd, user) => {
-			if (!cmd.guild) {
-				cmd.reply(NO_GUILD_REPLY)
-				return
-			}
-
-			const role = cmd.guild.roles.cache.find(r => r.name === VERIFIED_ROLE_NAME)
+		(cmd, member) => {
+			const role = cmd.guild!.roles.cache.find(r => r.name === VERIFIED_ROLE_NAME)
 			if (!role) {
 				cmd.reply(ROLE_NOT_FOUND_REPLY(VERIFIED_ROLE_NAME))
-				return
-			}
-
-			const member = cmd.guild.members.cache.get(user.id)
-			if (!member) {
-				cmd.reply(NOT_MEMBER_REPLY)
 				return
 			}
 
@@ -38,10 +27,10 @@ export default function startVerifyCmd(client: Client) {
 				.add(role)
 				.then(() => {
 					cmd.reply(SUCCESS_REPLY)
-					user.send(DM(cmd.guild!.name))
+					member.user.send(DM(cmd.guild!.name))
 				})
 				.catch(err => {
-					console.log(`Error when trying to add role ´${role.name}´ to user ´${user.username}´: ${err}`)
+					console.log(`Error when trying to add role ´${role.name}´ to user ´${member.user.username}´: ${err}`)
 					cmd.reply(FAILURE_REPLY)
 					return
 				})
