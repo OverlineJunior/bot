@@ -16,7 +16,7 @@ const defaultData: Data = {
 	warnings: [],
 }
 
-const file = await JSONFilePreset('../database.json', defaultData)
+const file = await JSONFilePreset('./database.json', defaultData)
 
 export const db = {
 	getWarnings: (guildId: string, memberId: string): Warning[] =>
