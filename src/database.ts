@@ -35,13 +35,15 @@ export const db = {
 		return w
 	},
 
-	removeWarning: async (id: string): Promise<void> => {
+	removeWarning: async (id: string): Promise<Warning> => {
 		const index = file.data.warnings.findIndex(w => w.id === id)
 		if (index === -1) {
 			throw new Error(`Warning with ID ${id} not found`)
 		}
 
+		const warning = file.data.warnings[index]
 		await file.update(({ warnings }) => warnings.splice(index, 1))
+		return warning
 	},
 
 	clearWarnings: async (guildId: string, memberId: string): Promise<void> => {
