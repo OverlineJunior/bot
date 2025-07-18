@@ -2,6 +2,20 @@ import { Client, Message } from "discord.js"
 import { splitFirst } from "../shared"
 import { parse, Argument } from "./parser"
 
+interface Command<Args extends readonly Argument[]> {
+	name: string
+	description: string
+	arguments_: Args,
+	handler: (cmd: Message, ...args: InferArguments<Args>) => void
+}
+
+interface AnyCommand {
+	name: string
+	description: string
+	arguments_: readonly Argument[]
+	handler: (cmd: Message, ...args: any[]) => void
+}
+
 type InferArguments<T extends readonly Argument[]> = {
 	[K in keyof T]: T[K] extends { parser: (...args: any[]) => infer R }
 	? NonNullable<R>
@@ -21,22 +35,41 @@ function tokenize(input: string): string[] {
 }
 
 export function command<const Args extends readonly Argument[]>(
-	client: Client,
 	name: string,
 	description: string,
 	arguments_: Args,
 	handler: (cmd: Message, ...args: InferArguments<Args>) => void,
-) {
-	client.on("messageCreate", (cmd) => {
-		if (cmd.author.bot) return
+): Command<Args> {
+	return {
+		name,
+		description,
+		arguments_,
+		handler,
+	}
+}
 
-		const [first, rest] = splitFirst(cmd.content, " ")
-		if (first !== `${PREFIX}${name}`) return
+export function startCommands(client: Client, commands: AnyCommand[]) {
+	for (const { name, description, arguments_, handler } of commands) {
+		client.on("messageCreate", (cmd) => {
+			if (cmd.author.bot) return
 
-		const args = tokenize(rest).map((token, i) => {
-			const arg = arguments_[i]
-			if (!arg || !arg.parser) {
-				return parse.string({
+			const [first, rest] = splitFirst(cmd.content, " ")
+			if (first !== `${PREFIX}${name}`) return
+
+			const args = tokenize(rest).map((token, i) => {
+				const arg = arguments_[i]
+				if (!arg || !arg.parser) {
+					return parse.string({
+						client,
+						cmd,
+						token,
+						cmdName: name,
+						cmdDescription: description,
+						arg,
+					})
+				}
+
+				return arg.parser({
 					client,
 					cmd,
 					token,
@@ -44,40 +77,31 @@ export function command<const Args extends readonly Argument[]>(
 					cmdDescription: description,
 					arg,
 				})
+			})
+
+			if (args.length < arguments_.length) {
+				const missingArgs = arguments_
+					.slice(args.length)
+					.map(arg => arg.name)
+					.join(', ')
+
+				cmd.reply(`Missing arguments: ${missingArgs}.`)
+				return
 			}
 
-			return arg.parser({
-				client,
-				cmd,
-				token,
-				cmdName: name,
-				cmdDescription: description,
-				arg,
-			})
+			if (args.length > arguments_.length) {
+				const overflowArgs = args
+					.slice(arguments_.length)
+					.map((_, i) => `argument ${i + arguments_.length + 1}`)
+					.join(', ')
+
+				cmd.reply(`Too many arguments provided: ${overflowArgs}.`)
+				return
+			}
+
+			if (args.every(arg => arg !== undefined)) {
+				handler(cmd, ...args as any)
+			}
 		})
-
-		if (args.length < arguments_.length) {
-			const missingArgs = arguments_
-				.slice(args.length)
-				.map(arg => arg.name)
-				.join(', ')
-
-			cmd.reply(`Missing arguments: ${missingArgs}.`)
-			return
-		}
-
-		if (args.length > arguments_.length) {
-			const overflowArgs = args
-				.slice(arguments_.length)
-				.map((_, i) => `argument ${i + arguments_.length + 1}`)
-				.join(', ')
-
-			cmd.reply(`Too many arguments provided: ${overflowArgs}.`)
-			return
-		}
-
-		if (args.every(arg => arg !== undefined)) {
-			handler(cmd, ...args as InferArguments<Args>)
-		}
-	})
+	}
 }
