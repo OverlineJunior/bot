@@ -1,16 +1,33 @@
 import { Client, Message, User } from "discord.js"
 
-type Parser = (client: Client, arg: string) => any
+type Parser = (client: Client, token: string) => any
 
 type Parsers = [Parser, ...Parser[]]
 
 const PREFIX = '?'
 
+function splitFirst(input: string, separator: string): [string, string] {
+	const [first, ...rest] = input.split(separator)
+
+	return [first, rest.join(separator)]
+}
+
+// Splits the input by spaces, but ignoring spaces within quotes,
+// which should be treated as a single token.
+function tokenize(input: string): string[] {
+	return input
+		.match(/"[^"]*"|'[^']*'|\S+/g)
+		?.map(arg => arg.replace(/^['"]|['"]$/g, '')) ?? []
+}
+
 export const parse = {
-	string: (_: Client, arg?: string): string | undefined => arg,
-	number: (_: Client, arg?: string): number | undefined => arg ? Number(arg) : undefined,
-	user: (client: Client, arg?: string): User | undefined => {
-		const userId = arg?.replace(/[<@!>]/g, '')
+	string: (_: Client, token: string): string | undefined => token,
+
+	number: (_: Client, token: string): number | undefined =>
+		token ? Number(token) : undefined,
+
+	user: (client: Client, token: string): User | undefined => {
+		const userId = token?.replace(/[<@!>]/g, '')
 		if (!userId) return undefined
 
 		return client.users.cache.get(userId) || undefined
@@ -42,13 +59,22 @@ export function command(
 	client.on("messageCreate", (msg) => {
 		if (msg.author.bot) return
 
-		const args = msg.content.split(" ")
-		if (args[0] !== `${PREFIX}${cmdName}`) return
+		const [first, rest] = splitFirst(msg.content, " ")
+		if (first !== `${PREFIX}${cmdName}`) return
 
-		const parsedArgs = parsers
-			? parsers.map((parse, i) => parse(client, args[i + 1]))
-			: args.slice(1)
+		const args = tokenize(rest).map((token, i) => {
+			if (parsers) {
+				// Overflowing arguments are ignored.
+				if (i >= parsers.length) {
+					return undefined
+				}
 
-		handler(msg, ...parsedArgs)
+				return parsers[i](client, token)
+			} else {
+				return parse.string(client, token)
+			}
+		})
+
+		handler(msg, ...args)
 	})
 }
