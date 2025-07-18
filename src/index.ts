@@ -10,6 +10,7 @@ import { sayCmd } from './commands/say'
 import { verifyCmd } from './commands/verify'
 import { unbanCmd } from './commands/unban'
 import { warnCmd } from './commands/warn'
+import { warningsCmd } from './commands/warnings'
 
 const client = new Client({
 	intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'MessageContent'],
@@ -26,6 +27,7 @@ startCommands(client, [
 	helpCmd,
 	unbanCmd,
 	warnCmd,
+	warningsCmd,
 ])
 
 client.login(process.env.TOKEN)
