@@ -7,7 +7,7 @@
 
 [x] Comando de verificação (igual nosso autoresponder?)
 
-[_] Kick
+[x] Kick
 
 [_] Ban
 
