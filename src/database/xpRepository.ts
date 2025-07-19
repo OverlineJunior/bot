@@ -1,4 +1,4 @@
-import { dbFile } from "./data"
+import { dbFile } from "./index"
 
 export interface Xp {
 	guildId: string
