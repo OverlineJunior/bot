@@ -12,12 +12,15 @@ import { unbanCmd } from './commands/unban'
 import { warnCmd } from './commands/warn'
 import { warningsCmd } from './commands/warnings'
 import { unwarnCmd } from './commands/unwarn'
+import startLeveling from './leveling'
+import { xpCmd } from './commands/xp'
 
 const client = new Client({
 	intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'MessageContent'],
 })
 
 startAutoReply(client)
+startLeveling(client)
 
 startCommands(client, [
 	dmCmd,
@@ -30,6 +33,7 @@ startCommands(client, [
 	warnCmd,
 	warningsCmd,
 	unwarnCmd,
+	xpCmd,
 ])
 
 client.login(process.env.TOKEN)
