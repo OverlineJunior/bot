@@ -11,7 +11,7 @@
 
 [x] Ban
 
-[_] Warn (incremental e persistente)
+[x] Warn (incremental e persistente)
 
 [_] Sistema de VIP
 
