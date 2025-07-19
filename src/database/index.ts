@@ -1,2 +1,3 @@
 export type { Data } from './data'
 export * from './warningRepository'
+export * from './xpRepository'
