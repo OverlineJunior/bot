@@ -1,10 +1,10 @@
 import { command, parse } from "../command"
-import { db } from "../database"
+import { removeWarning } from "../database"
 
 const SUCCESS_REPLY = (user: string, reason: string) => `Removed warning from ${user} for: ${reason}`
 const FAILURE_REPLY = "Failed to remove warning from user"
 const DM = (guild: string, removalReason: string, warningReason: string) =>
-`Your warning from ${guild} has been removed for: ${removalReason}\n
+	`Your warning from ${guild} has been removed for: ${removalReason}\n
 Warning reason was: ${warningReason}`
 
 export const unwarnCmd = command(
@@ -15,8 +15,7 @@ export const unwarnCmd = command(
 		{ name: 'reason', description: 'Reason for removing the warning', parser: parse.string },
 	],
 	(cmd, warningId, reason) => {
-		db
-			.removeWarning(warningId)
+		removeWarning(warningId)
 			.then(warning => {
 				const member = cmd.guild?.members.cache.get(warning.memberId)
 				if (member) {

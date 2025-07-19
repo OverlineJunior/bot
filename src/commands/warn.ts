@@ -1,5 +1,5 @@
 import { command, parse } from "../command"
-import { db } from "../database"
+import { addWarning } from "../database"
 
 const SUCCESS_REPLY = (user: string, reason: string) => `Warned ${user} for: ${reason}`
 const FAILURE_REPLY = "Failed to warn user"
@@ -13,8 +13,7 @@ export const warnCmd = command(
 		{ name: 'reason', description: 'The reason for the warning', parser: parse.string },
 	],
 	(cmd, member, reason) => {
-		db
-			.addWarning(cmd.guild!.id, member.id, reason)
+		addWarning(cmd.guild!.id, member.id, reason)
 			.then(() => {
 				member
 					.send(DM(cmd.guild!.name, reason))
