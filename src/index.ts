@@ -16,7 +16,7 @@ import startLeveling from './leveling'
 import { xpCmd } from './commands/xp'
 
 const client = new Client({
-	intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'MessageContent'],
+	intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'MessageContent', 'GuildVoiceStates'],
 })
 
 startAutoReply(client)

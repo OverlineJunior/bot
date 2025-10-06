@@ -28,7 +28,7 @@ export function nextLevelXp(xp: number): number {
 	return result
 }
 
-export default function startLeveling(client: Client) {
+function startChatLeveling(client: Client) {
 	client.on('messageCreate', async (msg) => {
 		if (msg.author.bot) return
 
@@ -39,4 +39,26 @@ export default function startLeveling(client: Client) {
 
 		await incrementXp(guildId, memberId, 10)
 	})
+}
+
+function startVoiceLeveling(client: Client) {
+	client.on('voiceStateUpdate', async (oldState, newState) => {
+		if (oldState.member?.user.bot || newState.member?.user.bot) return
+
+		const guildId = newState.guild.id
+
+		const memberId = newState.member?.id
+		if (!memberId) return
+
+		if (newState.channelId && !oldState.channelId) {
+			console.log(`User ${memberId} joined voice channel in guild ${guildId}`)
+		} else if (!newState.channelId && oldState.channelId) {
+			console.log(`User ${memberId} left voice channel in guild ${guildId}`)
+		}
+	})
+}
+
+export default function startLeveling(client: Client) {
+	startChatLeveling(client)
+	startVoiceLeveling(client)
 }
