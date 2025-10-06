@@ -109,5 +109,41 @@ export const parse = {
 		}
 
 		return member
-	}
+	},
+
+	date: ({ cmd, token, arg }: ParserContext): Date | undefined => {
+		const date = new Date(token)
+
+		if (isNaN(date.getTime())) {
+			cmd.reply(EXPECTED_GOT_REPLY(arg.name, 'a valid date', token))
+			return undefined
+		}
+
+		return date
+	},
+
+	duration: ({ cmd, token, arg }: ParserContext): number | undefined => {
+		const regex = /(\d+)([smhd])/g
+		let match
+		let ms = 0
+
+		while ((match = regex.exec(token)) !== null) {
+			const value = parseInt(match[1])
+			const unit = match[2]
+
+			switch (unit) {
+				case 's': ms += value * 1000; break
+				case 'm': ms += value * 60 * 1000; break
+				case 'h': ms += value * 60 * 60 * 1000; break
+				case 'd': ms += value * 24 * 60 * 60 * 1000; break
+			}
+		}
+
+		if (ms <= 0) {
+			cmd.reply(EXPECTED_GOT_REPLY(arg.name, 'a valid duration (e.g., 10m, 2h)', token))
+			return undefined
+		}
+
+		return ms
+	},
 }

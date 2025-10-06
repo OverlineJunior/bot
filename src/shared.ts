@@ -18,3 +18,26 @@ export function splitFirst(input: string, separator: string): [string, string] {
 export function isNumeric(str: string): boolean {
 	return !isNaN(Number(str)) && !isNaN(parseFloat(str))
 }
+
+export function beautifyMs(ms: number): string {
+	const units = [
+		{ label: 'd', value: 86_400_000 },
+		{ label: 'h', value: 3_600_000 },
+		{ label: 'm', value: 60_000 },
+		{ label: 's', value: 1_000 },
+	]
+
+	const parts: string[] = []
+	let remaining = ms
+
+	for (const unit of units) {
+		const amount = Math.floor(remaining / unit.value)
+
+		if (amount > 0) {
+			parts.push(`${amount}${unit.label}`)
+			remaining -= amount * unit.value
+		}
+	}
+
+	return parts.length > 0 ? parts.join('') : '0s'
+}
