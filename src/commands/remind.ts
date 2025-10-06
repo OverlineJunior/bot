@@ -1,5 +1,9 @@
 import { command, parse } from '../command'
+import { addReminder } from '../database'
 import { beautifyMs } from '../shared'
+
+const SUCCESS_REPLY = (user: string, time: number) => `Okay, I will remind ${user} in ${beautifyMs(time)}.`
+const FAILURE_REPLY = 'Failed to set reminder'
 
 export const remindCmd = command(
 	'remind',
@@ -11,7 +15,11 @@ export const remindCmd = command(
 	],
 	(cmd, member, time, msg) => {
 		// Add reminder to database and let the poller handle the rest.
-		cmd.reply(`Okay, I will remind ${member} in ${beautifyMs(time)}.`)
+		addReminder(cmd.guild!.id, member.id, msg, time)
+			.then(() => cmd.reply(SUCCESS_REPLY(member.user.tag, time)))
+			.catch(err => {
+				console.error(`Failed to add reminder for '${member.user.tag}': ${err}`)
+				cmd.reply(FAILURE_REPLY)
+			})
 	},
 )
-

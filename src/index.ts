@@ -15,6 +15,7 @@ import { unwarnCmd } from './commands/unwarn'
 import startLeveling from './leveling'
 import { xpCmd } from './commands/xp'
 import { remindCmd } from './commands/remind'
+import { remindersCmd } from './commands/reminders'
 
 const client = new Client({
 	intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'MessageContent', 'GuildVoiceStates'],
@@ -36,6 +37,7 @@ startCommands(client, [
 	unwarnCmd,
 	xpCmd,
 	remindCmd,
+	remindersCmd,
 ])
 
 client.login(process.env.TOKEN)
