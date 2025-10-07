@@ -7,7 +7,7 @@ export const helpCmd = command(
 	[],
 	(cmd) => {
 		const argList = (c: AnyCommand) => c.arguments_
-			.map(a => `  - *${a.name}*: ${a.description}`)
+			.map(a => `  - __${a.name}__: ${a.description}`)
 			.join('\n')
 
 		const cmdList = commands
