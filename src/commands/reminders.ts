@@ -1,5 +1,5 @@
 import { command, parse } from '../command'
-import { addReminder, getReminders } from '../database'
+import { addReminder, getMemberReminders } from '../database'
 import { beautifyMs } from '../shared'
 
 const SUCCESS_REPLY = (user: string, reminderList: string) => `${user} has the following active reminders:\n${reminderList}`
@@ -12,7 +12,7 @@ export const remindersCmd = command(
 		{ name: 'member', description: 'Member to remind', parser: parse.member },
 	],
 	(cmd, member) => {
-		const reminders = getReminders(cmd.guild!.id, member.id)
+		const reminders = getMemberReminders(cmd.guild!.id, member.id)
 
 		if (reminders.length === 0) {
 			cmd.reply(NO_REMINDERS_REPLY(member.user.tag))
