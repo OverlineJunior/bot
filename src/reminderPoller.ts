@@ -3,7 +3,7 @@ import { getAllReminders, removeReminder } from "./database"
 import { botLog } from "./logger"
 
 const POLL_INTERVAL_MS = 1000
-const REMINDER_DM = (message: string) => `Reminder: "${message}"`
+const REMINDER_DM = (message: string) => `:gs_aseta: Lembrete: "${message}"`
 
 export async function startReminderPoller(client: Client) {
 	async function poll() {

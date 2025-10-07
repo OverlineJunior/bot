@@ -2,16 +2,16 @@ import { command, parse } from '../command'
 import { addReminder } from '../database'
 import { beautifyMs } from '../shared'
 
-const SUCCESS_REPLY = (user: string, time: number) => `Okay, I will remind ${user} in ${beautifyMs(time)}.`
-const FAILURE_REPLY = 'Failed to set reminder'
+const SUCCESS_REPLY = (user: string, time: number) => `:gs_abyes: Ok! Eu vou lembrar ${user} em ${beautifyMs(time)} da interação dela.`
+const FAILURE_REPLY = ':gs_abno: Erro ao setar o comando'
 
 export const remindCmd = command(
 	'remind',
-	'Remind a member about something after a certain time',
+	'Criar um lembrete',
 	[
-		{ name: 'member', description: 'Member to remind', parser: parse.member },
-		{ name: 'time', description: 'When to remind', parser: parse.duration },
-		{ name: 'message', description: 'Message to remind with', parser: parse.string },
+		{ name: 'member', description: 'Membra a ser marcada no lembrete', parser: parse.member },
+		{ name: 'time', description: 'Quando lembrar', parser: parse.duration },
+		{ name: 'message', description: 'Mensagem do lembrete', parser: parse.string },
 	],
 	(cmd, member, time, msg) => {
 		// Add reminder to database and let the poller handle the rest.

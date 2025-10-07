@@ -1,15 +1,15 @@
 import { command, parse } from '../command'
-import { addReminder, getMemberReminders } from '../database'
+import { getMemberReminders } from '../database'
 import { beautifyMs } from '../shared'
 
-const SUCCESS_REPLY = (user: string, reminderList: string) => `${user} has the following active reminders:\n${reminderList}`
-const NO_REMINDERS_REPLY = (user: string) => `${user} has no active reminders.`
+const SUCCESS_REPLY = (user: string, reminderList: string) => `:gs_star: ${user} tem os seguintes lembretes ativos:\n${reminderList}`
+const NO_REMINDERS_REPLY = (user: string) => `:gs_star: ${user} não tem nenhum lembrete.`
 
 export const remindersCmd = command(
 	'reminders',
-	'List all active reminders for a member',
+	'Lista todos os lembretes de uma úsuaria',
 	[
-		{ name: 'member', description: 'Member to remind', parser: parse.member },
+		{ name: 'member', description: 'Membra a verificar os ', parser: parse.member },
 	],
 	(cmd, member) => {
 		const reminders = getMemberReminders(cmd.guild!.id, member.id)
