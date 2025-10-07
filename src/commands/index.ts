@@ -13,6 +13,8 @@ import { warnCmd } from './warn'
 import { warningsCmd } from './warnings'
 import { xpCmd } from './xp'
 
+export const COMMAND_PREFIX = '?'
+
 export const commands = [
 	dmCmd,
 	verifyCmd,

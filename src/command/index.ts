@@ -22,8 +22,6 @@ type InferArguments<T extends readonly Argument[]> = {
 	: string
 }
 
-const PREFIX = '?'
-
 export { parse }
 
 // Splits the input by spaces, but ignoring spaces within quotes,
@@ -48,13 +46,13 @@ export function command<const Args extends readonly Argument[]>(
 	}
 }
 
-export function startCommands(client: Client, commands: AnyCommand[]) {
+export function startCommands(client: Client, prefix: string, commands: AnyCommand[]) {
 	for (const { name, description, arguments_, handler } of commands) {
 		client.on("messageCreate", (cmd) => {
 			if (cmd.author.bot) return
 
 			const [first, rest] = splitFirst(cmd.content, " ")
-			if (first !== `${PREFIX}${name}`) return
+			if (first !== `${prefix}${name}`) return
 
 			const args = tokenize(rest).map((token, i) => {
 				const arg = arguments_[i]
