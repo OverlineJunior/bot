@@ -2,8 +2,8 @@ import { command, parse } from '../command'
 import { addReminder, getReminders } from '../database'
 import { beautifyMs } from '../shared'
 
-const SUCCESS_REPLY = (user: string, time: number) => `Okay, I will remind ${user} in ${beautifyMs(time)}.`
-const FAILURE_REPLY = 'Failed to set reminder'
+const SUCCESS_REPLY = (user: string, reminderList: string) => `${user} has the following active reminders:\n${reminderList}`
+const NO_REMINDERS_REPLY = (user: string) => `${user} has no active reminders.`
 
 export const remindersCmd = command(
 	'reminders',
@@ -15,7 +15,7 @@ export const remindersCmd = command(
 		const reminders = getReminders(cmd.guild!.id, member.id)
 
 		if (reminders.length === 0) {
-			cmd.reply(`${member.user.tag} has no active reminders.`)
+			cmd.reply(NO_REMINDERS_REPLY(member.user.tag))
 			return
 		}
 
@@ -23,6 +23,6 @@ export const remindersCmd = command(
 			.map(r => `- In ${beautifyMs(r.remindInMs)}: "${r.message}"`)
 			.join('\n')
 
-		cmd.reply(`${member.user.tag} has the following active reminders:\n${reminderList}`)
+		cmd.reply(SUCCESS_REPLY(member.user.tag, reminderList))
 	},
 )
