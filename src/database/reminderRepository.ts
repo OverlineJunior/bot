@@ -9,6 +9,10 @@ export interface Reminder {
 	remindInMs: number
 }
 
+export function getAllReminders(): Reminder[] {
+	return dbFile.data.reminders
+}
+
 export function getMemberReminders(guildId: string, memberId: string): Reminder[] {
 	return dbFile.data.reminders.filter(r => r.guildId === guildId && r.memberId === memberId)
 }
