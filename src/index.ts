@@ -17,6 +17,7 @@ import { xpCmd } from './commands/xp'
 import { remindCmd } from './commands/remind'
 import { remindersCmd } from './commands/reminders'
 import { forgetCmd } from './commands/forget'
+import { startReminderPoller } from './reminderPoller'
 
 const client = new Client({
 	intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'MessageContent', 'GuildVoiceStates'],
@@ -24,6 +25,7 @@ const client = new Client({
 
 startAutoReply(client)
 startLeveling(client)
+startReminderPoller(client)
 
 startCommands(client, [
 	dmCmd,
