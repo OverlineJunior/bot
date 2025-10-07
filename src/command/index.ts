@@ -9,7 +9,7 @@ interface Command<Args extends readonly Argument[]> {
 	handler: (cmd: Message, ...args: InferArguments<Args>) => void
 }
 
-interface AnyCommand {
+export interface AnyCommand {
 	name: string
 	description: string
 	arguments_: readonly Argument[]
