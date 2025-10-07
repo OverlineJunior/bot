@@ -20,7 +20,7 @@ export const remindersCmd = command(
 		}
 
 		const reminderList = reminders
-			.map(r => `- In ${beautifyMs(r.remindInMs)}: "${r.message}"`)
+			.map(r => `- In ${beautifyMs(r.remindInMs)}: "${r.message}" ||(ID: ${r.id})||`)
 			.join('\n')
 
 		cmd.reply(SUCCESS_REPLY(member.user.tag, reminderList))
