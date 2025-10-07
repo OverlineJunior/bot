@@ -1,5 +1,6 @@
 import { Client } from "discord.js"
 import { getAllReminders, removeReminder } from "./database"
+import { botLog } from "./logger"
 
 const POLL_INTERVAL_MS = 1000
 const REMINDER_DM = (message: string) => `Reminder: "${message}"`
@@ -16,6 +17,7 @@ export async function startReminderPoller(client: Client) {
 					const guild = await client.guilds.fetch(reminder.guildId)
 					const member = await guild.members.fetch(reminder.memberId)
 					await member.send(REMINDER_DM(reminder.message))
+					botLog(client, `Sent a reminder to ${member.user.tag}: ${reminder.message}`)
 
 					await removeReminder(reminder.id)
 				} catch (error) {
