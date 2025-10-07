@@ -1,4 +1,4 @@
-import { commands } from "."
+import { COMMAND_PREFIX, commands } from "."
 import { AnyCommand, command } from "../command"
 
 export const helpCmd = command(
@@ -11,7 +11,7 @@ export const helpCmd = command(
 			.join('\n')
 
 		const cmdList = commands
-			.map(c => `- **${c.name}**: ${c.description}\n${argList(c)}`)
+			.map(c => `- **${COMMAND_PREFIX}${c.name}**: ${c.description}\n${argList(c)}`)
 			.join('\n\n')
 
 		cmd.reply(`Available commands:\n\n${cmdList}`)
